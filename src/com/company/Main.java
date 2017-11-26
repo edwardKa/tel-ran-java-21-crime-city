@@ -1,8 +1,8 @@
 package com.company;
 
+import com.company.players.Agent;
 import com.company.players.Robber;
 import com.company.players.Slayer;
-import com.company.util.ThreadUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,18 +11,29 @@ import java.util.stream.Collectors;
 public class Main {
     private static final Integer SLAYERS_COUNT = 3;
     private static final Integer ROBBER_COUNT = 4;
-    private static final Integer SLEEP_SECOND = 20_000;
+    private static final Integer SLEEP_SECOND = 10_000;
 
     static List<Thread> band = new ArrayList<>();
 
     public static void main(String[] args) {
         startCrime();
-        ThreadUtil.sleep(SLEEP_SECOND);
+        sleep(SLEEP_SECOND);
 
         //вызываем полицию
         System.out.println("Приехала полиция");
         nonViolentStopCrime();
         violentStopCrime();
+
+        sleep(3000);
+        int agents = 0;
+        for (Agent agent : Robber.list) {
+            if (agent.isAlive()) {
+                agents++;
+            }
+        }
+
+        System.out.println(agents);
+
     }
 
     private static void startCrime() {
@@ -73,7 +84,7 @@ public class Main {
     private static void nonViolentStopCrime() {
         for (Thread criminal : band) {
             criminal.interrupt();
-            ThreadUtil.sleep(100);
+            sleep(100);
         }
 
     }
@@ -84,6 +95,14 @@ public class Main {
                 criminal.stop();
                 System.out.println(criminal.getName() + " убит полицией округа " + Thread.currentThread().getName() + "!");
             }
+        }
+    }
+
+    public static void sleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
